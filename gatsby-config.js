@@ -1,9 +1,13 @@
 const lost = require('lost')
 const pxtorem = require('postcss-pxtorem')
 
-const url = 'https://suspicious-lumiere-faa869.netlify.com/'
+const url = 'https://gatsby-starter-kontent-lumen.netlify.com/'
+
+require('dotenv').config()
 
 module.exports = {
+  // These properties are used by gatsby-plugin-sitemap
+  // https://www.gatsbyjs.org/packages/gatsby-plugin-sitemap/#how-to-use
   siteMetadata: {
     url,
     siteUrl: url,
@@ -12,18 +16,38 @@ module.exports = {
     {
       resolve: '@kentico/gatsby-source-kontent',
       options: {
-        deliveryClientConfig: {
-          projectId: '00676a8d-358c-0084-f2f2-33ed466c480a', // Fill in your Project ID
-        },
-        languageCodenames: [
-          'default', // Or the languages in your project (Project settings -> Localization)
+        projectId: process.env.KONTENT_PROJECT_ID, // Fill in your Project ID
+        // if false used authorization key for secured API
+        usePreviewUrl: process.env.KONTENT_PREVIEW_ENABLED && process.env.KONTENT_PREVIEW_ENABLED.toLowerCase() === 'true',
+        authorizationKey: process.env.KONTENT_PREVIEW_ENABLED && process.env.KONTENT_PREVIEW_ENABLED.toLowerCase() === 'true'
+          ? process.env.KONTENT_PREVIEW_KEY
+          : undefined,
+        languageCodenames: process.env.KONTENT_LANGUAGE_CODENAMES.split(',').map(lang => lang.trim()),
+      },
+    },
+    {
+      resolve: 'kontent-used-by-content-items', // local plugin
+      options: {
+        links: [
+          {
+            parentTypeCodename: 'article',
+            childTypeCodename: 'tag',
+            linkedElementCodename: 'tags',
+            backReferenceName: 'used_by_articles',
+          },
+          {
+            parentTypeCodename: 'article',
+            childTypeCodename: 'category',
+            linkedElementCodename: 'category',
+            backReferenceName: 'used_by_articles',
+          },
         ],
       },
     },
     'gatsby-plugin-sharp',
     {
       resolve: 'gatsby-plugin-google-analytics',
-      options: { trackingId: 'UA-39248355-10' },
+      options: { trackingId: '' }, // add own google analytics trackingId
     },
     {
       resolve: 'gatsby-plugin-google-fonts',
@@ -32,7 +56,6 @@ module.exports = {
       },
     },
     'gatsby-plugin-sitemap',
-    'gatsby-plugin-offline',
     'gatsby-plugin-catch-links',
     'gatsby-plugin-react-helmet',
     {

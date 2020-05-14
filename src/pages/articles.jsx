@@ -47,12 +47,12 @@ export const pageQuery = graphql`
         }
       }
     }
-    allKontentItemArticle {
+    allKontentItemArticle(filter: {preferred_language: {eq: "en-US"}}) {
       nodes {
         elements {
           category {
-            linked_items {
-              ... on KontentItemCategory {
+            value {
+              ... on kontent_item_category {
                 elements {
                   title {
                     value
@@ -71,16 +71,14 @@ export const pageQuery = graphql`
             value
           }
           content {
-            resolvedData {
-              html
-            }
+            value
           }
           slug {
             value
           }
           tags {
-            linked_items {
-              ... on KontentItemTag {
+            value {
+              ... on kontent_item_tag {
                 elements {
                   title {
                     value

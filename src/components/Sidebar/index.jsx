@@ -1,6 +1,6 @@
 import React from 'react'
 import get from 'lodash/get'
-import { Link, useStaticQuery } from 'gatsby'
+import { Link, useStaticQuery, graphql } from 'gatsby'
 
 import Menu from '../Menu'
 import Links from '../Links'
@@ -25,8 +25,8 @@ const sidebar = () => {
     kontentItemMenu(system: {codename: {eq: "navigation_menu"}}) {
       elements {
         menu_items {
-          linked_items {
-            ... on KontentItemMenuItem {
+          value {
+            ... on kontent_item_menu_item {
               id
               elements {
                 label {
@@ -101,13 +101,13 @@ const sidebar = () => {
             {isHomePage ? (
               <h1 className="sidebar__author-title">
                 <Link className="sidebar__author-title-link" to="/">
-                  {author.name}
+                  {author.elements.name.value}
                 </Link>
               </h1>
             ) : (
               <h2 className="sidebar__author-title">
                 <Link className="sidebar__author-title-link" to="/">
-                  {author.name}
+                  {author.elements.name.value}
                 </Link>
               </h2>
             )}
